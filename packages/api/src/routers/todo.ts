@@ -1,30 +1,31 @@
 import { db } from "@my-better-t-app/db";
-import { todo } from "@my-better-t-app/db/schema/todo";
+import { post } from "@my-better-t-app/db/schema/post";
 import { eq } from "drizzle-orm";
 import z from "zod";
 
-import { router, publicProcedure } from "../index";
+import { publicProcedure, router } from "../index";
 
-export const todoRouter = router({
+export const postRouter = router({
   getAll: publicProcedure.query(async () => {
-    return await db.select().from(todo);
+    return await db.select().from(post);
   }),
 
   create: publicProcedure
-    .input(z.object({ text: z.string().min(1) }))
+    .input(z.object({ title: z.string().min(1), content: z.string().min(1) }))
     .mutation(async ({ input }) => {
-      return await db.insert(todo).values({
-        text: input.text,
+      return await db.insert(post).values({
+        title: input.title,
+        content: input.content,
       });
     }),
 
-  toggle: publicProcedure
-    .input(z.object({ id: z.number(), completed: z.boolean() }))
+  update: publicProcedure
+    .input(z.object({ id: z.number(), title: z.string().min(1), content: z.string().min(1) }))
     .mutation(async ({ input }) => {
-      return await db.update(todo).set({ completed: input.completed }).where(eq(todo.id, input.id));
+      return await db.update(post).set({ title: input.title, content: input.content }).where(eq(post.id, input.id));
     }),
 
   delete: publicProcedure.input(z.object({ id: z.number() })).mutation(async ({ input }) => {
-    return await db.delete(todo).where(eq(todo.id, input.id));
+    return await db.delete(post).where(eq(post.id, input.id));
   }),
 });
