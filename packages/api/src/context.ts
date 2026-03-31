@@ -1,7 +1,10 @@
 import { auth } from "@my-better-t-app/auth";
-import type { NextRequest } from "next/server";
 
-export async function createContext(req: NextRequest) {
+type RequestWithHeaders = {
+  headers: Headers;
+};
+
+export async function createContext(req: RequestWithHeaders) {
   const session = await auth.api.getSession({
     headers: req.headers,
   });
