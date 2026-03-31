@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { auth } from "@my-better-t-app/auth";
@@ -15,9 +16,11 @@ export default async function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const requestHeaders = await headers();
+
   // If user is already logged in, redirect to home
   const session = await auth.api.getSession({
-    headers: new Headers(),
+    headers: requestHeaders,
   });
 
   if (session) {
